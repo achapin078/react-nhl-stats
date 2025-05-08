@@ -1,11 +1,17 @@
 import { useEffect, useState } from 'react';
 import TeamList from './components/TeamList.jsx';
-import { currentTeamIds } from './data/currentTeamIds.js'
+import TeamRoster from './components/TeamRoster.jsx';
+import { currentTeamIds } from './data/currentTeamIds.js';
 import './App.css';
 
 function App() {
   const [teams, setTeams] = useState([]);
   const [error, setError] = useState(null);
+  const [selectedTeamId, setSelectedTeamId] = useState(null);
+
+  const handleTeamClick = async (teamId) => {
+    setSelectedTeamId(teamId);
+}
 
   useEffect(() => {
     fetch('https://corsproxy.io/?url=https://api.nhle.com/stats/rest/en/team')
@@ -32,7 +38,14 @@ function App() {
   return (
     <div style={{ padding: '20p'}}>
       <h1>NHL Teams</h1>
-      {error ? <p>Error: {error}</p> : <TeamList teams={teams} />}
+      {error ? <p>Error: {error}</p> : <TeamList teams={teams} handleTeamClick={handleTeamClick} />}
+      {selectedTeamId ? (
+        <TeamRoster teamId={selectedTeamId} />
+      ) : (
+        <p style={{ marginTop: '2rem', textAlign: 'center' }}>
+          Select a team to view roster.
+        </p>
+      )}
     </div>
   );
 }
